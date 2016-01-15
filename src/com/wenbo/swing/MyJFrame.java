@@ -19,6 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
+import java.awt.SystemColor;
 
 public class MyJFrame extends JFrame {
 
@@ -29,6 +30,8 @@ public class MyJFrame extends JFrame {
 	private JPanel contentPane;
 	private JTextField username;
 	private JPasswordField passwordField;
+	private  JLabel msg;
+	static MyJFrame frame;
 
 	/**
 	 * Launch the application.
@@ -37,7 +40,7 @@ public class MyJFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MyJFrame frame = new MyJFrame();
+					 frame = new MyJFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,6 +59,7 @@ public class MyJFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(240, 240, 240));
 		contentPane.setLayout(null);//不设置布局方式
 		setContentPane(contentPane);
 		
@@ -117,6 +121,12 @@ public class MyJFrame extends JFrame {
 		 loginbutton.setBounds(64, 199, 93, 23);
 		 loginbutton.setActionCommand("login");
 		 loginbutton.addActionListener(new OnClickListener());
+		 
+		 msg = new JLabel("");
+		 msg.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+		 msg.setBounds(290, 108, 122, 15);
+		 msg.setForeground(Color.RED);
+		 contentPane.add(msg);
 		 contentPane.add(loginbutton);
 		 
 		 JButton resetbutton = new JButton("取  消");
@@ -143,10 +153,15 @@ public class MyJFrame extends JFrame {
 				System.out.println("用户点击登录按钮");
 				String name = username.getText();
 				String pwd = passwordField.getText();
-				System.out.println("用户名= "+name);
-				System.out.println("密码= "+pwd);
-				MainFrame frame = new MainFrame();
-				frame.setVisible(true);
+				if(name.equals("wenbo")&&pwd.equals("1120")){
+					frame.dispose();
+					MainFrame mframe = new MainFrame();
+					mframe.setVisible(true);
+				}else{
+					msg.setText("*用户名或密码不匹配*");
+				}
+				
+				
 			}else{
 				System.out.println("用户点击取消按钮");
 				System.exit(0);
