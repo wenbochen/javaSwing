@@ -9,19 +9,21 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JPasswordField;
-import java.awt.SystemColor;
 
-public class MyJFrame extends JFrame {
+import com.wenbo.widget.AlertDialog;
+
+public class LoginJFrame extends JFrame {
 
 	/**
 	 * 
@@ -31,7 +33,7 @@ public class MyJFrame extends JFrame {
 	private JTextField username;
 	private JPasswordField passwordField;
 	private  JLabel msg;
-	static MyJFrame frame;
+	static LoginJFrame frame;
 
 	/**
 	 * Launch the application.
@@ -40,7 +42,7 @@ public class MyJFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					 frame = new MyJFrame();
+					 frame = new LoginJFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -52,8 +54,8 @@ public class MyJFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MyJFrame() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MyJFrame.class.getResource("/res/share_to_wx_icon.png")));
+	public LoginJFrame() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginJFrame.class.getResource("/res/share_to_wx_icon.png")));
 		setFont(new Font("微软雅黑", Font.PLAIN, 12));
 		setTitle("文博系统客户端");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,7 +73,7 @@ public class MyJFrame extends JFrame {
 		 
 		 JPanel topborder = new JPanel();
 		 topborder.setBackground(new Color(32, 178, 170));
-		 topborder.setBounds(0, 0, 436, 36);
+		 topborder.setBounds(0, 0, 450, 36);
 		 contentPane.add(topborder);
 		 
 		 JLabel lblNewLabel = new JLabel("欢迎登陆");
@@ -163,8 +165,21 @@ public class MyJFrame extends JFrame {
 				
 				
 			}else{
-				System.out.println("用户点击取消按钮");
-				System.exit(0);
+				
+				int config = JOptionPane.showConfirmDialog(frame, "你确定要退出系统吗?","温馨提示",JOptionPane.YES_NO_CANCEL_OPTION);
+				if(config==0){//点击是
+					System.exit(0);//退出系统
+				}else{
+					//用户点击取消
+					
+				}
+//				JOptionPane.showMessageDialog(frame, "你确定要退出吗?");
+//				System.out.println("用户点击取消按钮");
+//				AlertDialog opendialog = new AlertDialog("你确定要退出吗?");
+//				opendialog.setVisible(true);
+//				opendialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);   
+//				opendialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				//System.exit(0);
 			}
 		}
 		
