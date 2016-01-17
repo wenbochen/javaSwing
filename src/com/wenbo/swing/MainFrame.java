@@ -143,6 +143,9 @@ public class MainFrame extends JFrame {
 					if(name.equals("简易计算器")){
 						SimpleCalculator jsq = new SimpleCalculator();
 						jsq.setVisible(true);
+					}else if(name.equals("双色球生成器")){
+						DoubleBall db = new DoubleBall();
+						db.setVisible(true);
 					}
 					
 				}

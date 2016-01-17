@@ -8,9 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 /**
@@ -28,7 +26,7 @@ public class SimpleCalculator extends JFrame {
 	private JTextField num1;
 	private JTextField num2;
 	private JTextField sumnum;
-
+	static SimpleCalculator frame;
 	/**
 	 * Launch the application.
 	 */
@@ -36,7 +34,7 @@ public class SimpleCalculator extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SimpleCalculator frame = new SimpleCalculator();
+					 frame = new SimpleCalculator();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -108,12 +106,18 @@ public class SimpleCalculator extends JFrame {
 			String command = e.getActionCommand();
 			if(command.equals("count")){
 				try {
+					String value1 = num1.getText();
+					String value2 = num2.getText();
+					if(value1.equals("")||value2.equals("")){
+						JOptionPane.showMessageDialog(frame, "请先输入数字!");
+						return;
+					}
 					int no1 = Integer.parseInt(num1.getText());
 					int no2 = Integer.parseInt(num2.getText());
 					int sum = no1+no2;
 					sumnum.setText(sum+"");
 				} catch (NumberFormatException e1) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(frame, "请输入数字!");
 					e1.printStackTrace();
 					
 				}
