@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Random;
 /**
- * 双色球生成器
+ * 双色球摇奖机
  * @author admin
  *
  */
@@ -28,9 +28,10 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 	private JTextField redball;
 	private JTextField blueball;
 	private JButton startbutton ;
+	private JButton stopbutton ;
 	static DoubleBall frame;
 	private Thread t;
-	boolean isSuspend = false;
+	boolean isRun = true;
 	/**
 	 * Launch the application.
 	 */
@@ -51,7 +52,7 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 	 * Create the frame.
 	 */
 	public DoubleBall() {
-		setTitle("双色球生成器");
+		setTitle("双色球摇奖机");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);//
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -87,7 +88,7 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 		startbutton.setBounds(135, 118, 117, 29);
 		contentPane.add(startbutton);
 		
-		JButton stopbutton = new JButton("停  止");
+		stopbutton = new JButton("停  止");
 		stopbutton.setActionCommand("stop");
 		stopbutton.addActionListener(this);
 		stopbutton.setBounds(135, 155, 117, 29);
@@ -150,23 +151,25 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if(command.equals("start")){
-			if(isSuspend){
-				isSuspend = false;
-				
-			}else{
-				if(!t.isAlive()){
-					t.start();
-					startbutton.setEnabled(false);
-				}
-				
-			}
+			startbutton.setEnabled(false);
+			stopbutton.setEnabled(true);
+			if(isRun){
+				t.start();
 			
+			}else{
+				isRun = true;
+			}
+					
 		}else if(command.equals("stop")){
-			isSuspend = true;
+				isRun = false;
 				startbutton.setEnabled(true);
+				stopbutton.setEnabled(false);
 		}else{
 			redball.setText("00-00-00-00-00-00");
 			blueball.setText("00");
+			isRun = false;
+			startbutton.setEnabled(true);
+			stopbutton.setEnabled(false);
 			JOptionPane.showMessageDialog(frame, "奖池已清空,请按开始按钮重新开始~");
 		}
 
@@ -177,17 +180,22 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 	public void run() {
 		//使用线程实现滚动
 		while(true){
-			getOneTicket();
-			try {
-				Thread.sleep(100);//休眠0.1s
-				synchronized (this) {
-					while(isSuspend){
-						wait();
-					}
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}//
+			if(isRun){
+				getOneTicket();
+				try {
+					Thread.sleep(100);//休眠0.1s
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}//
+			}else{
+				try {
+					Thread.sleep(1000);//休眠1s
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}//
+			}
+		
+			
 		}
 		
 	
