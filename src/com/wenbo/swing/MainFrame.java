@@ -110,7 +110,7 @@ public class MainFrame extends JFrame {
 					node_1 = new DefaultMutableTreeNode("入门小程序");
 						node_1.add(new DefaultMutableTreeNode("简易计算器"));
 						node_1.add(new DefaultMutableTreeNode("双色球生成器"));
-						node_1.add(new DefaultMutableTreeNode("red"));
+						node_1.add(new DefaultMutableTreeNode("通讯录"));
 						node_1.add(new DefaultMutableTreeNode("yellow"));
 					add(node_1);
 					node_1 = new DefaultMutableTreeNode("中级");
@@ -146,6 +146,9 @@ public class MainFrame extends JFrame {
 					}else if(name.equals("双色球生成器")){
 						DoubleBall db = new DoubleBall();
 						db.setVisible(true);
+					}else if(name.equals("通讯录")){
+						AddressBook book = new AddressBook();
+						book.setVisible(true);
 					}
 					
 				}
