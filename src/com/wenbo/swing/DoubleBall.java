@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Random;
+import java.awt.Font;
 /**
  * 双色球摇奖机
  * @author admin
@@ -69,6 +70,7 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 		contentPane.add(label);
 		
 		redball = new JTextField();
+		redball.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		redball.setBounds(66, 65, 186, 28);
 		contentPane.add(redball);
 		redball.setColumns(10);
@@ -78,6 +80,7 @@ public class DoubleBall extends JFrame implements ActionListener,Runnable{
 		contentPane.add(label_1);
 		
 		blueball = new JTextField();
+		blueball.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		blueball.setBounds(293, 66, 61, 28);
 		contentPane.add(blueball);
 		blueball.setColumns(10);

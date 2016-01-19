@@ -1,23 +1,27 @@
 package com.wenbo.swing;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import com.wenbo.bean.Person;
+import com.wenbo.util.DBUtils;
+import com.wenbo.util.TextUtils;
 /**
  * 通讯录 使用sqlite记录
  * @Description 
@@ -36,6 +40,7 @@ public class AddressBook extends JFrame implements ActionListener{
 	private JTextField phone;
 	private JTextField mobile;
 	private JLabel result;
+	private JLabel warnMsg;
 	private JTable table;
 
 	/**
@@ -53,23 +58,44 @@ public class AddressBook extends JFrame implements ActionListener{
 			}
 		});
 	}
-private void getAmsg(){
+	/**
+	 * 查询数据然后在表格中显示
+	 */
+private void getTable(){
 	try {
-		Class.forName("org.sqlite.JDBC");
-		//加载驱动
-		//创建链接 数据库不存在则自动创建
-		Connection conn =DriverManager.getConnection("jdbc:sqlite:books.db"); 
+		Connection conn =DBUtils.getConnection();
 		Statement state = conn.createStatement();
-	//	state.executeUpdate("create table if not exists book (name varchar(20),phone varchar(18),mobile varchar(18))");
+		//先创建book表 如果不存在
+		state.executeUpdate("create table if not exists book (name varchar(20),phone varchar(18),mobile varchar(18))");
 	//	state.execute("insert into book values('admin','010-68351588','13810261258')");
 		ResultSet rs = state.executeQuery("select * from book");
+//		String [] tableheader = {"姓名","电话","手机"};
+		Vector<String> tableheader = new Vector<String>();
+		tableheader.addElement("姓名");
+		tableheader.addElement("电话");
+		tableheader.addElement("手机");
+		Vector<Vector<String>>  vdata = new Vector<Vector<String>> ();
 		if(rs.next()){
+			Vector<String>  vrow = new Vector<String> ();
 			String name = rs.getString(1);
 			String phone = rs.getString(2);
 			String mobile = rs.getString(3);
+			vrow.addElement(name);
+			vrow.addElement(phone);
+			vrow.addElement(mobile);
+			vdata.addElement(vrow);
 			System.out.println(name+" ==="+phone+"==="+mobile);
 			result.setText(name+" ==="+phone+"==="+mobile);
 		}
+		DefaultTableModel model = new DefaultTableModel(vdata,tableheader){
+			 public boolean isCellEditable(int row, int column) { 
+				    return false; 
+				    //不可编辑表格
+				  } 
+		};
+		table.setModel(model);
+		table.repaint();
+		table.updateUI();
 		rs.close();
 		conn.close();
 	} catch (Exception e) {
@@ -77,6 +103,32 @@ private void getAmsg(){
 		e.printStackTrace();
 	}
 }
+
+/**
+ * 增加一条记录
+ * @param P
+ */
+private void addOnePerson(Person p){
+	Connection conn;
+	try {
+		conn = DBUtils.getConnection();
+		Statement state = conn.createStatement();
+		//先创建book表 如果不存在
+		state.executeUpdate("create table if not exists book (name varchar(20),phone varchar(18),mobile varchar(18))");
+		String sql = "insert into book values('" +p.getName()+"','"+p.getPhone()+"','"+p.getMobile()+"')";
+	boolean isOK =	state.execute(sql);
+	
+		result.setText("成功添加一条记录~");
+	
+		state.close();
+		conn.close();
+	} catch (SQLException e) {
+		System.out.println("sql错误");
+		e.printStackTrace();
+	}
+	
+}
+
 	/**
 	 * Create the frame.
 	 */
@@ -88,6 +140,11 @@ private void getAmsg(){
 		contentPane.setBackground(new Color(240, 240, 240));
 		contentPane.setLayout(null);//不设置布局方式
 		setContentPane(contentPane);
+		
+	    warnMsg = new JLabel("");
+		warnMsg.setForeground(Color.RED);
+		warnMsg.setBounds(54, 19, 199, 15);
+		contentPane.add(warnMsg);
 		
 		JLabel label = new JLabel("姓名:");
 		label.setBounds(54, 44, 37, 15);
@@ -116,8 +173,8 @@ private void getAmsg(){
 		contentPane.add(mobile);
 		mobile.setColumns(10);
 		
-		result = new JLabel("xx");
-		result.setBounds(295, 69, 83, 15);
+		result = new JLabel("");
+		result.setBounds(295, 69, 171, 15);
 		contentPane.add(result);
 		
 		JButton addbutton = new JButton("添  加");
@@ -131,26 +188,54 @@ private void getAmsg(){
 		querybutton.addActionListener(this);
 		querybutton.setBounds(145, 132, 93, 23);
 		contentPane.add(querybutton);
+		String [] tableheader = {"姓名","电话","手机"};
+		Object[][] data =null;
+		DefaultTableModel model = new DefaultTableModel(data,tableheader){
+			 public boolean isCellEditable(int row, int column) { 
+				    return false; 
+				    //不可编辑表格
+				  } 
+		};
 		
 		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{123, 145, 125},
-				{778, 767, 777},
-			},
-			new String[] {
-				"\u59D3\u540D", "\u7535\u8BDD", "\u624B\u673A"
-			}
-		));
-		table.setBounds(71, 233, 154, -23);
-		contentPane.add(table);
+		table.setModel(model);
+		table.setSize(180, 131);
+		//contentPane.add(table);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(42, 168, 278, 131);
+		scrollPane.setViewportView(table);//一定要把table添加到JScrollPane面板上才能显示表头
+		contentPane.add(scrollPane);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
-		if(command.equals("query")){
-			getAmsg();
+		if(command.equals("add")){
+			String namevalue = name.getText();
+			String phonevalue = phone.getText();
+			String mobilevalue =mobile.getText();
+			if(TextUtils.isEmpty(namevalue)){
+				warnMsg.setText("请输入姓名");
+				return;
+			}
+			if(TextUtils.isEmpty(phonevalue)){
+				warnMsg.setText("请输入电话号码");
+				return;
+			}
+			if(TextUtils.isEmpty(mobilevalue)){
+				warnMsg.setText("请输入手机号");
+				return;
+			}
+			warnMsg.setText("");
+			Person p = new Person();
+			p.setName(namevalue);
+			p.setPhone(phonevalue);
+			p.setMobile(mobilevalue);
+			addOnePerson(p);
+			
+		}else if(command.equals("query")){
+			getTable();
 		}
 		
 	}

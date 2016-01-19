@@ -6,22 +6,22 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-
-import com.wenbo.widget.AlertDialog;
 
 public class LoginJFrame extends JFrame {
 
@@ -99,6 +99,7 @@ public class LoginJFrame extends JFrame {
 		 contentPane.add(label);
 		 
 		 username = new JTextField();
+		 username.setText("wenbo");
 		 username.setBounds(124, 93, 156, 21);
 		 contentPane.add(username);
 		 username.setColumns(10);
@@ -109,6 +110,7 @@ public class LoginJFrame extends JFrame {
 		 contentPane.add(label_1);
 		 
 		 passwordField = new JPasswordField();
+		 passwordField.setText("1120");
 		 passwordField.setBounds(124, 124, 156, 21);
 		 contentPane.add(passwordField);
 		 
@@ -123,6 +125,26 @@ public class LoginJFrame extends JFrame {
 		 loginbutton.setBounds(64, 199, 93, 23);
 		 loginbutton.setActionCommand("login");
 		 loginbutton.addActionListener(new OnClickListener());
+		 loginbutton.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+					System.out.println("用户点击登录按钮");
+					String name = username.getText();
+					String pwd = passwordField.getText();
+					if(name.equals("wenbo")&&pwd.equals("1120")){
+						frame.dispose();
+						MainFrame mframe = new MainFrame();
+						mframe.setVisible(true);
+					}else{
+						msg.setText("*用户名或密码不匹配*");
+					}
+					
+					
+			
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		 
 		 msg = new JLabel("");
 		 msg.setFont(new Font("微软雅黑", Font.PLAIN, 12));
@@ -139,6 +161,7 @@ public class LoginJFrame extends JFrame {
 		 contentPane.add(resetbutton);
 		 
 	}
+	
 	/**
 	 * 监控点击事件
 	 * @Description 
