@@ -111,7 +111,7 @@ public class MainFrame extends JFrame {
 						node_1.add(new DefaultMutableTreeNode("简易计算器"));
 						node_1.add(new DefaultMutableTreeNode("双色球生成器"));
 						node_1.add(new DefaultMutableTreeNode("通讯录"));
-						node_1.add(new DefaultMutableTreeNode("yellow"));
+						node_1.add(new DefaultMutableTreeNode("二维码生成器"));
 					add(node_1);
 					node_1 = new DefaultMutableTreeNode("中级");
 						node_1.add(new DefaultMutableTreeNode("basketball"));

@@ -1,5 +1,6 @@
 # java Swing GUI
-> 用window builder创建可视化的java swing Gui
+> 用windowbuilder创建可视化的java swing GUI<br/>
+> windowbuilder是eclipse下的一个插件,可以用它直接拖拽出一个GUI
 
 ### 版本号：V1.1.2
 
@@ -8,6 +9,7 @@
 1. 增加通讯录
 2. 增加回车按键登录
 3. 双色球生成器可以实现摇奖效果
+4. 增加二维码生成器
 
 #### =================================================
 

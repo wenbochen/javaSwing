@@ -42,6 +42,7 @@ public class AddressBook extends JFrame implements ActionListener{
 	private JLabel result;
 	private JLabel warnMsg;
 	private JTable table;
+	private JTextField input;
 
 	/**
 	 * Launch the application.
@@ -59,23 +60,26 @@ public class AddressBook extends JFrame implements ActionListener{
 		});
 	}
 	/**
-	 * 查询数据然后在表格中显示
+	 * 根据输入关键词查询
+	 * @param keyword
 	 */
-private void getTable(){
+private void getTable(String keyword){
 	try {
 		Connection conn =DBUtils.getConnection();
 		Statement state = conn.createStatement();
 		//先创建book表 如果不存在
 		state.executeUpdate("create table if not exists book (name varchar(20),phone varchar(18),mobile varchar(18))");
-	//	state.execute("insert into book values('admin','010-68351588','13810261258')");
-		ResultSet rs = state.executeQuery("select * from book");
+		String sql = "select * from book where name like '%"+keyword+"%' or phone like '%"+keyword+"%' or mobile like '%"+keyword
+				+"%'";
+		ResultSet rs = state.executeQuery(sql);
 //		String [] tableheader = {"姓名","电话","手机"};
 		Vector<String> tableheader = new Vector<String>();
 		tableheader.addElement("姓名");
 		tableheader.addElement("电话");
 		tableheader.addElement("手机");
 		Vector<Vector<String>>  vdata = new Vector<Vector<String>> ();
-		if(rs.next()){
+		int count =0;
+		while(rs.next()){
 			Vector<String>  vrow = new Vector<String> ();
 			String name = rs.getString(1);
 			String phone = rs.getString(2);
@@ -84,9 +88,11 @@ private void getTable(){
 			vrow.addElement(phone);
 			vrow.addElement(mobile);
 			vdata.addElement(vrow);
-			System.out.println(name+" ==="+phone+"==="+mobile);
-			result.setText(name+" ==="+phone+"==="+mobile);
+//			System.out.println(name+" ==="+phone+"==="+mobile);
+//			result.setText(name+" ==="+phone+"==="+mobile);
+			count++;
 		}
+		result.setText("共查询到 "+count+" 条记录");
 		DefaultTableModel model = new DefaultTableModel(vdata,tableheader){
 			 public boolean isCellEditable(int row, int column) { 
 				    return false; 
@@ -174,19 +180,19 @@ private void addOnePerson(Person p){
 		mobile.setColumns(10);
 		
 		result = new JLabel("");
-		result.setBounds(295, 69, 171, 15);
+		result.setBounds(234, 97, 172, 15);
 		contentPane.add(result);
 		
 		JButton addbutton = new JButton("添  加");
 		addbutton.setActionCommand("add");
 		addbutton.addActionListener(this);
-		addbutton.setBounds(42, 132, 93, 23);
+		addbutton.setBounds(211, 65, 93, 23);
 		contentPane.add(addbutton);
 		
 		JButton querybutton = new JButton("查  询");
 		querybutton.setActionCommand("query");
 		querybutton.addActionListener(this);
-		querybutton.setBounds(145, 132, 93, 23);
+		querybutton.setBounds(211, 124, 93, 23);
 		contentPane.add(querybutton);
 		String [] tableheader = {"姓名","电话","手机"};
 		Object[][] data =null;
@@ -206,6 +212,12 @@ private void addOnePerson(Person p){
 		scrollPane.setBounds(42, 168, 278, 131);
 		scrollPane.setViewportView(table);//一定要把table添加到JScrollPane面板上才能显示表头
 		contentPane.add(scrollPane);
+		
+		input = new JTextField();
+		input.setToolTipText("输入关键字:如姓名 手机号");
+		input.setBounds(54, 125, 147, 21);
+		contentPane.add(input);
+		input.setColumns(10);
 	}
 	
 	@Override
@@ -219,14 +231,11 @@ private void addOnePerson(Person p){
 				warnMsg.setText("请输入姓名");
 				return;
 			}
-			if(TextUtils.isEmpty(phonevalue)){
-				warnMsg.setText("请输入电话号码");
+			if(TextUtils.isEmpty(phonevalue)&&TextUtils.isEmpty(mobilevalue)){
+				warnMsg.setText("电话号码和手机号至少输入一个");
 				return;
 			}
-			if(TextUtils.isEmpty(mobilevalue)){
-				warnMsg.setText("请输入手机号");
-				return;
-			}
+		
 			warnMsg.setText("");
 			Person p = new Person();
 			p.setName(namevalue);
@@ -235,7 +244,15 @@ private void addOnePerson(Person p){
 			addOnePerson(p);
 			
 		}else if(command.equals("query")){
-			getTable();
+			String keyword = input.getText();
+			if(TextUtils.isEmpty(keyword)){
+				warnMsg.setText("请输入关键词后查询");
+				return;
+			}else{
+				warnMsg.setText("");
+			}
+			
+			getTable(keyword);
 		}
 		
 	}
