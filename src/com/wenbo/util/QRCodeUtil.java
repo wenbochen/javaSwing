@@ -10,7 +10,9 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.Random;
 
@@ -36,7 +38,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 public class QRCodeUtil {
 
 	private static final String CHARSET = "utf-8";
-	private static final String FORMAT_NAME = "PNG";
+	private static final String FORMAT_NAME = "JPG";
 	// 二维码尺寸
 	private static final int QRCODE_SIZE = 300;
 	// LOGO宽度
@@ -119,7 +121,7 @@ public class QRCodeUtil {
 		int x = (QRCODE_SIZE - width) / 2;
 		int y = (QRCODE_SIZE - height) / 2;
 		graph.drawImage(src, x, y, width, height, null);
-		Shape shape = new RoundRectangle2D.Float(x, y, width, width, 6, 6);
+		Shape shape = new RoundRectangle2D.Float(x, y, width, width, 5, 5);
 		graph.setStroke(new BasicStroke(3f));
 		graph.draw(shape);
 		graph.dispose();
@@ -184,6 +186,21 @@ public class QRCodeUtil {
 		mkdirs(destPath);
 		String file = new Random().nextInt(99999999)+".jpg";
 		ImageIO.write(image, FORMAT_NAME, new File(destPath+"/"+file));
+	}
+	/**
+	 * 保存二维码图片到本地
+	 * @param path
+	 * @param isCompress
+	 * @return
+	 */
+	public static boolean saveQRCode(BufferedImage image,String path,boolean isCompress){
+		try {
+			ImageIO.write(image, FORMAT_NAME, new File(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		return false;
+		}
+		return true;
 	}
 
 	/**
@@ -293,8 +310,11 @@ public class QRCodeUtil {
 		}
 		if (imgPath == null || "".equals(imgPath)) {
 			//插入缺省logo
-			QRCodeUtil.insertImageByDefault(image, needCompress);
-			return image;
+			URL url =  QRCodeUtil.class.getResource("/res/icon.png");
+//			File f = url.getFile();
+			imgPath = url.getFile();
+		
+//			return image;
 		}
 		// 插入图片
 		QRCodeUtil.insertImage(image, imgPath, needCompress);

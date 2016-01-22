@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
+import com.wenbo.util.DateUtils;
 import com.wenbo.util.QRCodeUtil;
 import com.wenbo.util.TextUtils;
 /**
@@ -38,6 +39,10 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 	private JLabel warnmsg;
 	private JLabel logo_prew;
 	private JLabel lbllogol;
+	private JButton save_button;
+	private JFileChooser jfc;
+	private String path = "";
+	private BufferedImage bufferimage;
 
 	/**
 	 * Launch the application.
@@ -112,12 +117,22 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 		choicelogo.addActionListener(this);
 		choicelogo.setActionCommand("file");
 		contentPane.add(choicelogo);
+		
+		save_button= new JButton("保存二维码");
+		save_button.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+		save_button.setBounds(447, 273, 113, 23);
+		save_button.setVisible(false);
+		save_button.setActionCommand("save");
+		save_button.addActionListener(this);
+		contentPane.add(save_button);
+		
+		jfc=new JFileChooser();  
 	}
 	
-	private void showQRCode(String content){
-		BufferedImage bufferimage;
+	private void showQRCode(String content,String path){
+	
 		try {
-			bufferimage = QRCodeUtil.createQRCode(content,null,true);
+			bufferimage = QRCodeUtil.createQRCode(content,path,true);
 			ImageIcon icon = new ImageIcon(bufferimage);
 			codeimage.setIcon(icon);
 		} catch (Exception e) {
@@ -137,22 +152,48 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 				return;
 			}else{
 				warnmsg.setText("");
-				showQRCode(content);
+				showQRCode(content,path);
+				save_button.setVisible(true);
 			}
 		}else if(command.equals("file")){
 			//打开文件选择器
-			JFileChooser jfc=new JFileChooser();  
+			jfc=new JFileChooser();  
 			jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			jfc.setFileFilter(new ImageFileFilter());
-			jfc.showDialog(new JLabel(), "选择");  
+			jfc.setFileFilter(new ImageFileFilter());//设置文件过滤器
+			int state =jfc.showDialog(new JLabel(), "选择文件");  //打开文件选择器后的操作 如果用户取消则返回1 否则返回0
+			if(state==1){
+				return;
+			}
 			File file=jfc.getSelectedFile();  
 			if(file==null)
 				return;
 			if(file.isFile()){
 				warnmsg.setText("选择文件: "+file.getAbsolutePath());
-				ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+				path = file.getAbsolutePath();
+				ImageIcon icon = new ImageIcon(path);
 				logo_prew.setIcon(icon);
 			}
+		}else if(command.equals("save")){
+			
+			String filename = DateUtils.getNowTime(DateUtils.DATE_KEY_STR)+".jpg";
+			File file = new File(filename);
+			jfc=new JFileChooser();  
+			jfc.setFileFilter(new ImageFileFilter());//设置文件过滤器
+			jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+			jfc.setSelectedFile(file);
+			int savestate = jfc.showSaveDialog(this);
+			if(savestate==JFileChooser.APPROVE_OPTION){//选择的文件名
+				file = jfc.getSelectedFile();
+				String savepath = file.getAbsolutePath();
+				boolean isok = QRCodeUtil.saveQRCode(bufferimage, savepath, false);
+				if(isok){
+					warnmsg.setText("保存文件在: "+file.getAbsolutePath());
+				}else{
+					warnmsg.setText("保存失败! ");
+				}
+				
+			}
+			
 		}
 		
 	}
