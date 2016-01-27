@@ -112,6 +112,7 @@ public class MainFrame extends JFrame {
 						node_1.add(new DefaultMutableTreeNode("双色球生成器"));
 						node_1.add(new DefaultMutableTreeNode("通讯录"));
 						node_1.add(new DefaultMutableTreeNode("二维码生成器"));
+						node_1.add(new DefaultMutableTreeNode("爱记账"));
 					add(node_1);
 					node_1 = new DefaultMutableTreeNode("中级");
 						node_1.add(new DefaultMutableTreeNode("basketball"));
@@ -149,6 +150,12 @@ public class MainFrame extends JFrame {
 					}else if(name.equals("通讯录")){
 						AddressBook book = new AddressBook();
 						book.setVisible(true);
+					}else if(name.equals("二维码生成器")){
+						QRCodeBuilder qrc = new QRCodeBuilder();
+						qrc.setVisible(true);
+					}else if(name.equals("爱记账")){
+						IJizhang ijz = new IJizhang();
+						ijz.setVisible(true);
 					}
 					
 				}

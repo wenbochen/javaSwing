@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -22,6 +24,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+
+import com.wenbo.util.APPConfig;
+import com.wenbo.util.DBUtils;
 
 public class LoginJFrame extends JFrame {
 
@@ -44,13 +49,33 @@ public class LoginJFrame extends JFrame {
 				try {
 					 frame = new LoginJFrame();
 					frame.setVisible(true);
+					String	dbName =APPConfig.init().getKey("dbName");
+					boolean hasfind = findDBFile(dbName);
+					if(hasfind){
+						
+					}else{
+						DBUtils.init().createTables();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-
+	
+/**
+ * 检查数据库文件是否存在
+ * @param dbname
+ * @return
+ */
+	private static boolean findDBFile(String dbname){
+		File file = new File(dbname);
+		if(file.exists()){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	/**
 	 * Create the frame.
 	 */
