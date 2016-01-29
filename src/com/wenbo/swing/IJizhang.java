@@ -145,7 +145,7 @@ public class IJizhang extends JFrame {
 			Statement state = conn.createStatement();
 			//先创建book表 如果不存在
 			state.executeUpdate("create table if not exists book (name varchar(20),phone varchar(18),mobile varchar(18))");
-			String sql = "insert into book values('" +p.getName()+"','"+p.getPhone()+"','"+p.getMobile()+"')";
+			String sql = "insert into book values('" +r.getAmount()+"','"+r.getDate()+"','"+r.getRemark()+"')";
 		boolean isOK =	state.execute(sql);
 		
 			JOptionPane.showMessageDialog(contentPane, "成功添加一条记账~");
