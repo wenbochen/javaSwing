@@ -39,7 +39,7 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 	private JLabel warnmsg;
 	private JLabel logo_prew;
 	private JLabel lbllogol;
-	private JButton save_button;
+	private JButton save_button,barbutton;
 	private JFileChooser jfc;
 	private String path = "";
 	private BufferedImage bufferimage;
@@ -64,7 +64,7 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public QRCodeBuilder() {
-		setTitle("二维码生成器");
+		setTitle("二维码/条码生成器");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);//
 		setBounds(100, 100, 586, 492);
 		contentPane = new JPanel();
@@ -79,7 +79,7 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 		
 		JButton button = new JButton("生成二维码");
 		button.setFont(new Font("微软雅黑", Font.PLAIN, 12));
-		button.setBounds(311, 95, 121, 23);
+		button.setBounds(139, 96, 121, 23);
 		button.addActionListener(this);
 		button.setActionCommand("build");
 		contentPane.add(button);
@@ -99,6 +99,7 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 		
 		warnmsg = new JLabel("");
 		warnmsg.setForeground(Color.RED);
+		warnmsg.setFont(new Font("微软雅黑", Font.PLAIN, 12));
 		warnmsg.setBounds(28, 119, 502, 15);
 		contentPane.add(warnmsg);
 		
@@ -113,12 +114,12 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 		
 		JButton choicelogo = new JButton("选择logo");
 		choicelogo.setFont(new Font("微软雅黑", Font.PLAIN, 12));
-		choicelogo.setBounds(170, 95, 93, 23);
+		choicelogo.setBounds(10, 133, 93, 23);
 		choicelogo.addActionListener(this);
 		choicelogo.setActionCommand("file");
 		contentPane.add(choicelogo);
 		
-		save_button= new JButton("保存二维码");
+		save_button= new JButton("保存图片");
 		save_button.setFont(new Font("微软雅黑", Font.PLAIN, 12));
 		save_button.setBounds(447, 273, 113, 23);
 		save_button.setVisible(false);
@@ -126,9 +127,20 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 		save_button.addActionListener(this);
 		contentPane.add(save_button);
 		
+	    barbutton = new JButton("生成条码");
+	    barbutton.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+		barbutton.setBounds(318, 96, 121, 23);
+		barbutton.setActionCommand("buildbar");
+		barbutton.addActionListener(this);
+		contentPane.add(barbutton);
+		
 		jfc=new JFileChooser();  
 	}
-	
+	/**
+	 * 生成二维码
+	 * @param content 二维码内容
+	 * @param path 文件路径
+	 */
 	private void showQRCode(String content,String path){
 	
 		try {
@@ -136,7 +148,22 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 			ImageIcon icon = new ImageIcon(bufferimage);
 			codeimage.setIcon(icon);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	/**
+	 * 生成条码
+	 * @param content 条码内容
+	 * @param path 文件路径
+	 */
+	private void showBarCode(String content,String path){
+		
+		try {
+			bufferimage = QRCodeUtil.getBarcode(content,240,60,20);
+			ImageIcon icon = new ImageIcon(bufferimage);
+			codeimage.setIcon(icon);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -145,6 +172,7 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
+		//生成二维码
 		if(command.equals("build")){
 			String content = textArea.getText();
 			if(TextUtils.isEmpty(content)){
@@ -155,7 +183,23 @@ public class QRCodeBuilder extends JFrame implements ActionListener{
 				showQRCode(content,path);
 				save_button.setVisible(true);
 			}
-		}else if(command.equals("file")){
+			//生成条码
+		}else if(command.equals("buildbar")){
+			String content = textArea.getText();
+			if(TextUtils.isEmpty(content)){
+				warnmsg.setText("请输入内容,内容只能为数字,字母");
+				return;
+			}else{
+				if(!content.matches("[A-Za-z0-9]+")){
+					warnmsg.setText("条码内容只能为数字,字母或者数字+字母组合");
+					return;
+				}
+				warnmsg.setText("");
+				showBarCode(content,path);
+				save_button.setVisible(true);
+			}
+		}
+		else if(command.equals("file")){
 			//打开文件选择器
 			jfc=new JFileChooser();  
 			jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);

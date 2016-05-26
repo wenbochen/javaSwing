@@ -39,6 +39,8 @@ public class QRCodeUtil {
 
 	private static final String CHARSET = "utf-8";
 	private static final String FORMAT_NAME = "JPG";
+	private static final int BLACK = 0xff000000;
+	private static final int WHITE = 0xFFFFFFFF;
 	// 二维码尺寸
 	private static final int QRCODE_SIZE = 300;
 	// LOGO宽度
@@ -46,7 +48,7 @@ public class QRCodeUtil {
 	// LOGO高度
 	private static final int HEIGHT = 60;
 /**
- * 返回一个Image对象
+ * 返回一个Image对象二维码
  * @param content 输入内容
  * @param imgPath 图像路径
  * @param needCompress 是否压缩
@@ -67,8 +69,8 @@ public class QRCodeUtil {
 				BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				image.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000
-						: 0xFFFFFFFF);
+				image.setRGB(x, y, bitMatrix.get(x, y) ? BLACK
+						: WHITE);
 			}
 		}
 		if (imgPath == null || "".equals(imgPath)) {
@@ -76,6 +78,67 @@ public class QRCodeUtil {
 		}
 		// 插入图片
 		QRCodeUtil.insertImage(image, imgPath, needCompress);
+		return image;
+	}
+	/**
+	 * 生成条形码
+	 * @param content 条码内容
+	 * @param width 条码宽度
+	 * @param height 条码高度
+	 * @param marginWidth 两边留白
+	 * @return
+	 */
+	public static BufferedImage getBarcode(String content, Integer width,
+			Integer height,Integer marginWidth)
+	{
+
+		if (width == null || width < 200)
+		{
+			width = 200;
+		}
+
+		if (height == null || height < 50)
+		{
+			height = 50;
+		}
+
+		try
+		{
+			// 文字编码
+			Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+			hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
+			hints.put(EncodeHintType.MARGIN, 1);
+			hints.put(EncodeHintType.MIN_SIZE, 3);
+			BitMatrix bitMatrix = new MultiFormatWriter().encode(content,
+					BarcodeFormat.CODE_128, width, height, hints);
+			return toBufferedImage(bitMatrix);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 转换成图片
+	 * 
+	 * @param matrix
+	 * @return
+	 */
+	private static BufferedImage toBufferedImage(BitMatrix matrix)
+	{
+		int width = matrix.getWidth();
+		int height = matrix.getHeight();
+		BufferedImage image = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				image.setRGB(x, y, matrix.get(x, y) ? BLACK : WHITE);
+			}
+		}
 		return image;
 	}
 
