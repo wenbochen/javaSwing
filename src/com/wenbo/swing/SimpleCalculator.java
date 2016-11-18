@@ -1,7 +1,9 @@
 package com.wenbo.swing;
 
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,6 +28,8 @@ public class SimpleCalculator extends JFrame {
 	private JTextField num1;
 	private JTextField num2;
 	private JTextField sumnum;
+	private Choice choice;
+	private int opr = 1;
 	static SimpleCalculator frame;
 	/**
 	 * Launch the application.
@@ -63,22 +67,18 @@ public class SimpleCalculator extends JFrame {
 		contentPane.add(num1);
 		num1.setColumns(10);
 		
-		JLabel label = new JLabel("+");
-		label.setBounds(90, 51, 10, 16);
-		contentPane.add(label);
-		
 		num2 = new JTextField();
-		num2.setBounds(100, 45, 62, 28);
+		num2.setBounds(128, 45, 62, 28);
 		contentPane.add(num2);
 		num2.setColumns(10);
 		
 		JLabel label_1 = new JLabel("=");
-		label_1.setBounds(163, 51, 21, 16);
+		label_1.setBounds(200, 50, 21, 16);
 		contentPane.add(label_1);
 		
 		sumnum = new JTextField();
 		sumnum.setEditable(false);
-		sumnum.setBounds(174, 45, 92, 28);
+		sumnum.setBounds(210, 45, 117, 28);
 		contentPane.add(sumnum);
 		sumnum.setColumns(10);
 		
@@ -93,6 +93,15 @@ public class SimpleCalculator extends JFrame {
 		resetbutton.setActionCommand("ac");
 		resetbutton.addActionListener(new OnClickListener());
 		contentPane.add(resetbutton);
+		
+		choice = new Choice();
+		choice.add("＋");
+		choice.add("－");
+		choice.add("×");
+		choice.add("÷");
+		choice.setBounds(84, 45, 38, 28);
+		choice.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+		contentPane.add(choice);
 	}
 	/**
 	 * 
@@ -112,9 +121,29 @@ public class SimpleCalculator extends JFrame {
 						JOptionPane.showMessageDialog(frame, "请先输入数字!");
 						return;
 					}
-					int no1 = Integer.parseInt(num1.getText());
-					int no2 = Integer.parseInt(num2.getText());
-					int sum = no1+no2;
+					double no1 = Double.parseDouble(num1.getText());
+					double no2 =Double.parseDouble(num2.getText());
+					double sum = 0.0;
+					int c = choice.getSelectedIndex();
+					switch (c) {
+					// + - x /
+					case 0:
+						sum = no1 + no2;
+						break;
+					case 1:
+						sum = no1 - no2;
+						break;
+					case 2:
+						sum = no1 * no2;
+						break;
+					case 3:
+						sum = no1 / no2;
+						break;
+
+					default:
+						break;
+					}
+					
 					sumnum.setText(sum+"");
 				} catch (NumberFormatException e1) {
 					JOptionPane.showMessageDialog(frame, "请输入数字!");
