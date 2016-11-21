@@ -1,7 +1,7 @@
 # java Swing GUI
 > 用windowbuilder创建可视化的java swing GUI<br/>
 > windowbuilder是eclipse下的一个插件,可以用它直接拖拽出一个GUI<br/>
-> git@github.com:wenbochen/myswing.git
+> git@github.com:wenbochen/javaswing.git
 
 #### =================================================
 ### 版本号：V1.1.4
@@ -51,6 +51,6 @@
 
 > i am a android developer
 
-[文博那些事](http://wenbo100.sinaapp.com/ "文博的微博")
+[文博那些事](http://www.wenbo.site/ "文博的微博")
 
 
